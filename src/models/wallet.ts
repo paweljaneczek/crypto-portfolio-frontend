@@ -6,6 +6,16 @@ export type Wallet = {
   address: string;
 };
 
+export type WalletEthInfo = {
+  balance: number;
+  price: {
+    rate: number;
+    diff: number;
+    diff7d: number;
+    ts: number;
+  };
+};
+
 export type WalletTokenInfo = {
   balance: number;
   tokenInfo: {
@@ -34,15 +44,7 @@ export type WalletTokenInfo = {
 
 export type WalletInfo = {
   ts: number;
-  ETH: {
-    balance: number;
-    price: {
-      rate: number;
-      diff: number;
-      diff7d: number;
-      ts: number;
-    };
-  };
+  ETH: WalletEthInfo;
   countTxs: number;
   tokens: WalletTokenInfo[];
 };

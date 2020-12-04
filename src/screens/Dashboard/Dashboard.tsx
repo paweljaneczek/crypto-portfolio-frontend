@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { ColumnContainer, EditWalletDialog } from "../../components";
 import { Wallet } from "../../models";
 import wallet from "../../reducers/wallet";
+import WalletSectionContainer from "./WalletSectionContainer";
 
 const useStyles = makeStyles({
   emptyContainer: {
@@ -12,6 +13,9 @@ const useStyles = makeStyles({
   },
   container: {
     alignItems: "stretch",
+  },
+  section: {
+    margin: 16,
   },
 });
 
@@ -42,7 +46,13 @@ export default function Dashboard(props: Props) {
       </ColumnContainer>
     ) : (
       <ColumnContainer className={classes.container}>
-        {wallets.map(wallet => )}
+        {wallets.map((wallet) => (
+          <WalletSectionContainer
+            className={classes.section}
+            key={wallet.id}
+            wallet={wallet}
+          />
+        ))}
       </ColumnContainer>
     );
   return (
