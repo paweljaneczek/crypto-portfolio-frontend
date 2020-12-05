@@ -14,7 +14,7 @@ import { CssBaseline } from "@material-ui/core";
 const { store, persistor } = configureStore();
 
 // if you want to clear peristor uncomment
-persistor.purge();
+// persistor.purge();
 
 const onBeforeLift = () => {
   clearAllErrors(store.dispatch);

@@ -9,4 +9,5 @@ export const Column = styled(Div)({
 export const ColumnContainer = styled(Column)({
   flex: 1,
   height: "100%",
+  overflow: "scroll",
 });

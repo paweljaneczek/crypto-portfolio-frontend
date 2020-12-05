@@ -21,7 +21,7 @@ export type WalletTokenInfo = {
   tokenInfo: {
     address: string;
     name: string;
-    decimals: number;
+    decimals: string;
     symbol: string;
     totalSupply: string;
     owner: string;

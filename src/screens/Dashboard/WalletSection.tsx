@@ -63,7 +63,7 @@ export default function WalletSection(props: Props) {
       {info && (
         <Grid container spacing={2}>
           {info.tokens.map((token) => (
-            <Grid item xs={12} md={4} xl={3} key={token.tokenInfo.address}>
+            <Grid item xs={12} sm={6} md={4} lg={2} xl={1} key={token.tokenInfo.address}>
               <Card elevation={3} className={classes.card}>
                 <WalletItem tokenInfo={token} />
               </Card>
