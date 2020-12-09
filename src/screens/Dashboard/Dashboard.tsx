@@ -3,8 +3,7 @@ import { makeStyles } from "@material-ui/styles";
 import React, { useState } from "react";
 import { ColumnContainer, EditWalletDialog } from "../../components";
 import { Wallet } from "../../models";
-import wallet from "../../reducers/wallet";
-import WalletSectionContainer from "./WalletSectionContainer";
+import WalletSection from "./WalletSection";
 
 const useStyles = makeStyles({
   emptyContainer: {
@@ -47,7 +46,7 @@ export default function Dashboard(props: Props) {
     ) : (
       <ColumnContainer className={classes.container}>
         {wallets.map((wallet) => (
-          <WalletSectionContainer
+          <WalletSection
             className={classes.section}
             key={wallet.id}
             wallet={wallet}

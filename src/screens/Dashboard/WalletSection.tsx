@@ -1,3 +1,4 @@
+import { gql, useQuery } from "@apollo/client";
 import {
   CircularProgress,
   Grid,
@@ -26,44 +27,77 @@ const useStyles = makeStyles({
   },
 });
 
+const WALLET_INFO = gql`
+  query Query($walletInfoAddress: String) {
+    walletInfo(address: $walletInfoAddress) {
+      countTxs
+      ETH {
+        balance
+        price {
+          currency
+          diff
+          diff7d
+          rate
+          ts
+        }
+      }
+      tokens {
+        balance
+        tokenInfo {
+          address
+          name
+        }
+      }
+    }
+  }
+`;
+
 type Props = {
   className?: string;
   wallet: Wallet;
-  info?: WalletInfo;
-  requestState: RequestState;
-  getWalletInfo: (data: { wallet: Wallet }) => void;
 };
 
 export default function WalletSection(props: Props) {
-  const { className, wallet, info, requestState, getWalletInfo } = props;
+  const { className, wallet } = props;
+  const { loading, error, data, refetch } = useQuery(WALLET_INFO, {
+    variables: { walletInfoAddress: wallet.address },
+  });
+
+  console.log("DUPA", loading, error, data);
 
   const classes = useStyles();
 
-  useEffect(() => {
-    getWalletInfo({ wallet });
-  }, [wallet, getWalletInfo]);
+  const walletInfo: WalletInfo | undefined = data?.walletInfo;
 
-  const handleRetry = () => getWalletInfo({ wallet });
+  const handleRetry = () => refetch();
 
   return (
     <Column className={clsx(className, classes.container)}>
       <Typography className={classes.title} variant="h4">
         {wallet.name}
       </Typography>
-      {!info && requestState.isOngoing && (
+      {!walletInfo && loading && (
         <CircularProgress className={classes.centered} />
       )}
-      {!info && requestState.error && (
+      {!walletInfo && error && (
         <ErrorWithRetry
           className={classes.centered}
           message="Could not fetch data. Please Retry."
           onRetry={handleRetry}
         />
       )}
-      {info && (
+      {walletInfo && (
         <Grid container spacing={2}>
-          {info.tokens.map((token) => (
-            <Grid item xs={12} sm={6} md={4} lg={2} xl={1} key={token.tokenInfo.address}>
+          {walletInfo.tokens.map((token) => (
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              lg={2}
+              xl={1}
+              key={token.tokenInfo.address}
+            >
               <Card elevation={3} className={classes.card}>
                 <WalletItem tokenInfo={token} />
               </Card>

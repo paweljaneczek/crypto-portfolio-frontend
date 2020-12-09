@@ -10,6 +10,12 @@ import { clearAllErrors } from "./actions";
 import { isDev } from "./utils";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
 import { CssBaseline } from "@material-ui/core";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+
+const client = new ApolloClient({
+  uri: "http://localhost:4000/",
+  cache: new InMemoryCache(),
+});
 
 const { store, persistor } = configureStore();
 
@@ -33,12 +39,14 @@ ReactDOM.render(
       persistor={persistor}
       onBeforeLift={onBeforeLift}
     >
-      <MuiThemeProvider theme={THEME}>
-        <>
-          <CssBaseline />
-          <App />
-        </>
-      </MuiThemeProvider>
+      <ApolloProvider client={client}>
+        <MuiThemeProvider theme={THEME}>
+          <>
+            <CssBaseline />
+            <App />
+          </>
+        </MuiThemeProvider>
+      </ApolloProvider>
     </PersistGate>
   </Provider>,
   document.getElementById("root"),
