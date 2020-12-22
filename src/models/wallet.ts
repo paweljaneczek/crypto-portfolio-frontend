@@ -9,6 +9,7 @@ export type Wallet = {
 export type WalletEthInfo = {
   balance: number;
   price: {
+    currency: string;
     rate: number;
     diff: number;
     diff7d: number;
@@ -21,8 +22,8 @@ export type WalletTokenInfo = {
   tokenInfo: {
     address: string;
     name: string;
-    decimals: string;
-    symbol: string;
+    decimals?: string;
+    symbol?: string;
     totalSupply: string;
     owner: string;
     holdersCount: number;
@@ -51,6 +52,4 @@ export type WalletInfo = {
 
 export interface WalletReduxState {
   wallets: Wallet[];
-  infos: { [id: string]: WalletInfo };
-  infoRequestStates: { [id: string]: RequestState };
 }

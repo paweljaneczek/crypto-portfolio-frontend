@@ -5,16 +5,28 @@ import {
   makeStyles,
   Card,
   Typography,
+  IconButton,
 } from "@material-ui/core";
+import EditIcon from "@material-ui/icons/Edit";
 import clsx from "clsx";
-import React, { useEffect } from "react";
-import { Column, ErrorWithRetry } from "../../components";
-import { RequestState, Wallet, WalletInfo } from "../../models";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+  Column,
+  EditWalletDialog,
+  ErrorWithRetry,
+  Row,
+} from "../../components";
+import { Wallet, WalletInfo } from "../../models";
+import { calculateWalletMoneySum, getSortedWalletInfo } from "../../utils";
 import WalletItem from "./WalletToken";
 
 const useStyles = makeStyles({
+  header: {
+    alignItems: "center",
+    padding: 12,
+  },
   title: {
-    marginBottom: 16,
+    textAlign: "left",
   },
   container: {
     alignItems: "stretch",
@@ -27,6 +39,14 @@ const useStyles = makeStyles({
   },
 });
 
+const itemProps: any = {
+  xs: 12,
+  sm: 6,
+  md: 4,
+  lg: 3,
+  xl: 2,
+};
+
 const WALLET_INFO = gql`
   query Query($walletInfoAddress: String) {
     walletInfo(address: $walletInfoAddress) {
@@ -38,7 +58,6 @@ const WALLET_INFO = gql`
           diff
           diff7d
           rate
-          ts
         }
       }
       tokens {
@@ -46,6 +65,15 @@ const WALLET_INFO = gql`
         tokenInfo {
           address
           name
+          symbol
+          image
+          decimals
+          price {
+            currency
+            rate
+            diff
+            diff7d
+          }
         }
       }
     }
@@ -59,23 +87,44 @@ type Props = {
 
 export default function WalletSection(props: Props) {
   const { className, wallet } = props;
+
   const { loading, error, data, refetch } = useQuery(WALLET_INFO, {
     variables: { walletInfoAddress: wallet.address },
   });
-
-  console.log("DUPA", loading, error, data);
+  const [showEditDialog, setShowEditDialog] = useState(false);
 
   const classes = useStyles();
 
-  const walletInfo: WalletInfo | undefined = data?.walletInfo;
+  const optionalWalletInfo = data?.walletInfo;
+  const walletInfo: WalletInfo | undefined = useMemo(() => {
+    if (!optionalWalletInfo) {
+      return undefined;
+    }
+    return getSortedWalletInfo(optionalWalletInfo);
+  }, [optionalWalletInfo]);
+
+  useEffect(() => {
+    refetch({ walletInfoAddress: wallet.address });
+  }, [wallet.address, refetch]);
 
   const handleRetry = () => refetch();
+  const handleEditClick = () => setShowEditDialog(true);
+  const handleEditDialogClose = () => setShowEditDialog(false);
 
   return (
     <Column className={clsx(className, classes.container)}>
-      <Typography className={classes.title} variant="h4">
-        {wallet.name}
-      </Typography>
+      <Row className={classes.header}>
+        <Typography className={classes.title} variant="h4">
+          {wallet.name}
+        </Typography>
+        <IconButton onClick={handleEditClick}>
+          <EditIcon />
+        </IconButton>
+        <div style={{ flex: 1 }} />
+        <Typography variant="h4" color="secondary">
+          {walletInfo ? calculateWalletMoneySum(walletInfo) : ""}
+        </Typography>
+      </Row>
       {!walletInfo && loading && (
         <CircularProgress className={classes.centered} />
       )}
@@ -88,16 +137,13 @@ export default function WalletSection(props: Props) {
       )}
       {walletInfo && (
         <Grid container spacing={2}>
+          <Grid item {...itemProps}>
+            <Card elevation={3} className={classes.card}>
+              <WalletItem ethInfo={walletInfo.ETH} />
+            </Card>
+          </Grid>
           {walletInfo.tokens.map((token) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              lg={2}
-              xl={1}
-              key={token.tokenInfo.address}
-            >
+            <Grid item {...itemProps} key={token.tokenInfo.address}>
               <Card elevation={3} className={classes.card}>
                 <WalletItem tokenInfo={token} />
               </Card>
@@ -105,6 +151,11 @@ export default function WalletSection(props: Props) {
           ))}
         </Grid>
       )}
+      <EditWalletDialog
+        open={showEditDialog}
+        walletId={wallet.id}
+        onClose={handleEditDialogClose}
+      />
     </Column>
   );
 }

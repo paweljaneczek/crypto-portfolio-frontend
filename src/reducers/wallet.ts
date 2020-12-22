@@ -5,14 +5,11 @@ import {
   clearCache,
   createWallet,
   deleteWallet,
-  getWalletInfo,
   updateWallet,
 } from "../actions";
 
 export const WALLET_INITIAL_STATE: WalletReduxState = {
   wallets: [],
-  infos: {},
-  infoRequestStates: {},
 };
 
 export default reducerWithInitialState(WALLET_INITIAL_STATE)
@@ -31,7 +28,6 @@ export default reducerWithInitialState(WALLET_INITIAL_STATE)
         wallet,
         state.wallets,
       ),
-      infos: R.dissoc(wallet.id, state.infos),
     } as WalletReduxState),
   )
   .case(deleteWallet, (state, wallet) =>
@@ -41,22 +37,5 @@ export default reducerWithInitialState(WALLET_INITIAL_STATE)
         1,
         state.wallets,
       ),
-      infos: R.dissoc(wallet.id, state.infos),
     } as WalletReduxState),
-  )
-  .case(getWalletInfo.async.started, (state, { wallet }) =>
-    R.mergeDeepRight(state, {
-      infoRequestStates: { [wallet.id]: { error: null, isOngoing: true } },
-    }),
-  )
-  .case(getWalletInfo.async.failed, (state, { params: { wallet }, error }) =>
-    R.mergeDeepRight(state, {
-      infoRequestStates: { [wallet.id]: { error, isOngoing: false } },
-    }),
-  )
-  .case(getWalletInfo.async.done, (state, { params: { wallet }, result }) =>
-    R.mergeDeepRight(state, {
-      infoRequestStates: { [wallet.id]: { error: null, isOngoing: false } },
-      infos: { [wallet.id]: result },
-    }),
   );

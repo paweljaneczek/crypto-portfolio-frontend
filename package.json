@@ -12,6 +12,7 @@
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.0",
     "clsx": "^1.1.1",
+    "cryptocurrency-icons": "^0.17.0",
     "fontsource-roboto": "^3.0.3",
     "graphql": "^15.4.0",
     "js-sha3": "^0.8.0",

@@ -40,3 +40,15 @@ export const isChecksumAddress = (address: string) => {
   }
   return true;
 };
+
+const CURRENCY_SYMBOL_MAP: { [key: string]: string } = {
+  USD: "$",
+};
+
+export const formatPrice = (price?: number, currency?: string) => {
+  const symbol = CURRENCY_SYMBOL_MAP[currency || "USD"];
+  if (!price) {
+    return `${symbol}?`;
+  }
+  return `${symbol}${price.toFixed(2)}`;
+};

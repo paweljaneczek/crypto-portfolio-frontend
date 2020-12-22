@@ -9,11 +9,12 @@ import reportWebVitals from "./reportWebVitals";
 import { clearAllErrors } from "./actions";
 import { isDev } from "./utils";
 import { createMuiTheme, MuiThemeProvider } from "@material-ui/core/styles";
-import { CssBaseline } from "@material-ui/core";
+import { colors, CssBaseline } from "@material-ui/core";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const client = new ApolloClient({
   uri: "http://localhost:4000/",
+  // uri: "https://crypto-portfolio-backend-dpf3k.ondigitalocean.app",
   cache: new InMemoryCache(),
 });
 
@@ -29,6 +30,7 @@ const onBeforeLift = () => {
 const THEME = createMuiTheme({
   palette: {
     type: "dark",
+    secondary: colors.lightBlue,
   },
 });
 

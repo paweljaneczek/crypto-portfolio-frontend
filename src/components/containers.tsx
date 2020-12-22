@@ -11,3 +11,8 @@ export const ColumnContainer = styled(Column)({
   height: "100%",
   overflow: "scroll",
 });
+
+export const Row = styled(Div)({
+  display: "flex",
+  flexDirection: "row",
+});
