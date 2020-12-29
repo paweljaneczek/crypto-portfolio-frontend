@@ -50,5 +50,6 @@ export const formatPrice = (price?: number, currency?: string) => {
   if (!price) {
     return `${symbol}?`;
   }
-  return `${symbol}${price.toFixed(2)}`;
+  const length = (Math.log(Math.round(1 / price)) * Math.LOG10E + 1) | 0;
+  return `${symbol}${price.toFixed(2 + Math.max(0, length - 1))}`;
 };
